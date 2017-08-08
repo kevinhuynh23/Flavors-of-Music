@@ -19,12 +19,21 @@ token <- content(response)$access_token
 
 shinyServer(function(input, output) {
   songs <- reactive({
-    energy.min <- input$energySlider[1]
-    energy.max <- input$energySlider[2]
-    query.params <- list(min_energy = energy.min, max_energy = energy.max)
+    query.params <- list(min_acousticness = input$acousticSlider[1],
+                         max_acousticness = input$acousticSlider[2],
+                         min_danceability = input$danceSlider[1],
+                         max_danceability = input$danceSlider[2],
+                         min_energy = input$energySlider[1],
+                         max_energy = input$energySlider[2],
+                         min_popularity = input$popularSlider[1],
+                         max_popularity = input$popularSlider[2],
+                         min_valence = input$valenceSlider[1],
+                         max_valence = input$valenceSlider[2]
+                         )
     response <- GET(base.uri, query.params, add_headers(Authorization = paste0("Bearer ", token)))
     recommended.playlist <- fromJSON(content(response, "text"))
     return(recommended.playlist)
   })
+  
 
 })

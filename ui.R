@@ -4,11 +4,15 @@ shinyUI(fluidPage(
   titlePanel("Flavors of Music"),
   
   sidebarPanel(
+    sliderInput("acousticSlider", "Acousticness:", min = 0, max = 1.0, value = c(0, 1.0), step = 0.1, dragRange = TRUE),
+    sliderInput("danceSlider", "Danceability:", min = 0, max = 1.0, value = c(0, 1.0), step = 0.1, dragRange = TRUE),
     sliderInput("energySlider", "Energy:", min = 0, max = 1.0, value = c(0, 1.0), step = 0.1, dragRange = TRUE),
+    sliderInput("popularSlider", "Popularity:", min = 0, max = 100, value = c(0, 100), step = 10, dragRange = TRUE),
+    sliderInput("valenceSlider", "Valence:", min = 0, max = 1.0, value = c(0, 1.0), step = 0.1, dragRange = TRUE),
     actionButton("recommendButton", "Recommend!")
   ),
   mainPanel(
-    tableOutput("recommendTable")
+    htmlOutput("recommendations")
   )
   
 )
