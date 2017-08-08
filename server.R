@@ -1,26 +1,30 @@
-#
-# This is the server logic of a Shiny web application. You can run the 
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
+library(httr)
+library(jsonlite)
+library(XML)
+source("apikeys.R")
 
-# Define server logic required to draw a histogram
+base.uri <- "https://api.spotify.com/v1/recommendations"
+
+response <- POST("https://accounts.spotify.com/api/token", 
+                 accept_json(),
+                 authenticate(client.id, client.secret), 
+                 body = list(grant_type = "client_credentials"),
+                 encode = "form",
+                 verbose()
+                 )
+token <- content(response)$access_token
+
+
+
 shinyServer(function(input, output) {
-   
-  output$distPlot <- renderPlot({
-    
-    # generate bins based on input$bins from ui.R
-    x    <- faithful[, 2] 
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    
-    # draw the histogram with the specified number of bins
-    hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    
+  songs <- reactive({
+    energy.min <- input$energySlider[1]
+    energy.max <- input$energySlider[2]
+    query.params <- list(min_energy = energy.min, max_energy = energy.max)
+    response <- GET(base.uri, query.params, add_headers(Authorization = paste0("Bearer ", token)))
+    recommended.playlist <- fromJSON(content(response, "text"))
+    return(recommended.playlist)
   })
-  
+
 })
