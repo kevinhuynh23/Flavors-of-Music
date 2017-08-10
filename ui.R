@@ -1,9 +1,12 @@
 library(shiny)
+library(shinythemes)
 
 shinyUI(fluidPage(
+  theme = shinytheme("sandstone"),
   titlePanel("Flavors of Music"),
   
   sidebarPanel(
+    selectizeInput("genres", "Genres*", choices = NULL),
     sliderInput("acousticSlider", "Acousticness:", min = 0, max = 1.0, value = c(0, 1.0), step = 0.1, dragRange = TRUE),
     sliderInput("danceSlider", "Danceability:", min = 0, max = 1.0, value = c(0, 1.0), step = 0.1, dragRange = TRUE),
     sliderInput("energySlider", "Energy:", min = 0, max = 1.0, value = c(0, 1.0), step = 0.1, dragRange = TRUE),
@@ -12,7 +15,9 @@ shinyUI(fluidPage(
     actionButton("recommendButton", "Recommend!")
   ),
   mainPanel(
-    htmlOutput("recommendations")
+    verticalLayout(
+      tags$div(id = "placeholder") 
+    )
   )
   
 )
