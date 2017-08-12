@@ -15,9 +15,7 @@ shinyUI(fluidPage(
     actionButton("recommendButton", "Recommend!")
   ),
   mainPanel(
-    verticalLayout(
       tags$div(id = "placeholder") 
-    )
   )
   
 )

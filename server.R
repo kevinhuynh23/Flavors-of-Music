@@ -15,7 +15,7 @@ response <- POST("https://accounts.spotify.com/api/token",
                  body = list(grant_type = "client_credentials"),
                  encode = "form",
                  verbose()
-                 )
+)
 token <- content(response)$access_token
 
 # Retrieving list of available genres
@@ -50,15 +50,15 @@ shinyServer(function(input, output, session) {
   observeEvent(input$recommendButton, {
     req(input$genres)  # requires genre selection
     
-    removeUI(selector = "#widget", multiple = TRUE)
-
+    removeUI(selector = "#placeholder p", multiple = TRUE)  # Removes all previous Spotify widgets
     
     response <- GET(base.uri,
                     accept_json(),
                     query = query.params(),
                     add_headers(Authorization = paste0("Bearer ", token)),
-                    encode = "form"
-                    )
+                    encode = "form",
+                    verbose()
+    )
     recommendations.object <- fromJSON(content(response, "text"))
     songs <- as.data.frame(recommendations.object)  # Dataframe of recommended songs
     
@@ -66,22 +66,22 @@ shinyServer(function(input, output, session) {
       song <- songs[i, ]
       source.uri <- URLencode(song$tracks.uri, reserved = TRUE)
       source.uri <- paste0(base.widget.uri, source.uri)
-      widget <- tags$div(htmlOutput("#widgets",
-                           container = tags$iframe,
-                           src = source.uri,
-                           width = "500",
-                           height = "100",
-                           frameborder = "0",
-                           allowTransparency = TRUE
-                           ),
-                        id = "#widget"
+      widget <- tags$p(htmlOutput("widget",
+                                    container = tags$iframe,
+                                    src = source.uri,
+                                    width = "250",
+                                    height = "330",
+                                    frameborder = "0",
+                                    allowTransparency = TRUE
+      ),
+      id = "widget"
       )
-      insertUI(selector = "#placeholder", where = "afterEnd", ui = widget)
+      insertUI(selector = "#placeholder", where = "beforeEnd", ui = widget)
     }
   })
   
   
   
-
-
+  
+  
 })
